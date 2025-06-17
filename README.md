@@ -86,59 +86,6 @@ java -mx8000M -jar /usr/local/share/chromhmm-1.26-0/ChromHMM.jar LearnModel \
   10 \
   B73v5
 
-
-### Convert Bed files to bigbed for genome browser
-
-#### for loops for dense.bed files
-
-for f in RootTip_*_dense.bed
-do
-  echo "Remove header from $f"
-  tail -n +2 "$f" > "${f%.bed}.notrack.bed"
-
-  echo "Sort ${f%.bed}.notrack.bed"
-  sort -k1,1 -k2,2n "${f%.bed}.notrack.bed" > "${f%.bed}.notrack.sorted.bed"
-
-  echo "Convert to bigBed: ${f%.bed}.notrack.sorted.bed"
-  bedToBigBed -type=bed9 "${f%.bed}.notrack.sorted.bed" \
-    /work2/03302/lconcia/references/maize/assemblies/B73/Zm-B73-REFERENCE-NAM-5.0.sizes.genome \
-    "${f%.bed}.notrack.sorted.bb"
-done
-
-#### for loops for expanded.bed files
-
-for f in RootTip_*expanded*.bed
-do
-  echo "Remove header from $f"
-  grep -v '^browser' "$f" | grep -v '^track' > "$f.tmp"
-
-  echo "Sort $f.tmp"
-  sort -k1,1 -k2,2n "$f.tmp" > "${f%.bed}.sorted.tmp"
-
-  echo "Remove problematic lines from ${f%.bed}.sorted.tmp"
-  awk 'NF != 12 { print; next }
-    {
-      split($11, sizes, ",");
-      split($12, starts, ",");
-      valid = 1;
-      for (i = 1; i < length(sizes); i++) {
-        s1 = starts[i]; e1 = starts[i] + sizes[i];
-        s2 = starts[i+1];
-        if (e1 > s2) {
-          valid = 0;
-          break;
-        }
-      }
-      if (valid) print
-    }' "${f%.bed}.sorted.tmp" > "${f%.bed}.cleaned.bed"
-
-  echo "Convert ${f%.bed}.cleaned.bed to bigBed"
-  bedToBigBed -type=bed12 "${f%.bed}.cleaned.bed" \
-    /work2/03302/lconcia/references/maize/assemblies/B73/Zm-B73-REFERENCE-NAM-5.0.sizes.genome \
-    "${f%.bed}.cleaned.bb"
-done
-
-
 **####change marks order on x-axis for emission plots**
 
 apptainer exec /work2/03302/lconcia/sif_files/chromhmm_1.26--hdfd78af_0.sif \
