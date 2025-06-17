@@ -1,4 +1,6 @@
-######Make index. files for reference genome**
+
+
+**######Make index. files for reference genome**
 #!/bin/bash
 #SBATCH -J bowtie2-build_chromHMM.job # job name
 #SBATCH -o bowtie2-build_chromHMM.%j.out # output file name (%j expands to jobID)
