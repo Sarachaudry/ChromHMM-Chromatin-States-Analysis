@@ -1,15 +1,15 @@
-######Make index. files for reference genome
+### 1) Make index. files for reference genome
 
 mkdir -p bowtie2_index
 time apptainer exec /work2/03302/lconcia/sif_files/bowtie2_2.4.4.sif \
 bowtie2-build --threads 48 Zm-B73-REFERENCE-NAM-5.0_without_scaffold.fa bowtie2_index/Zm-B73-REFERENCE-NAM-5.0
 
-#####CHIP-seq read alignment
+### 2) ChIP-seq read alignment
 
-# Create a clean output directory
+#### Create a clean output directory
 mkdir -p aligned_bams
 
-# Loop through all _1.fastq files only
+#### Loop through all _1.fastq files only
 for r1 in *_1.fastq; do
     r2=${r1/_1.fastq/_2.fastq}
     sample=$(basename $r1 _1.fastq)
